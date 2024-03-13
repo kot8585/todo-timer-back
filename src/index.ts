@@ -24,6 +24,6 @@ const server = app.listen(port, () => {
   console.log(`server on ${port}`);
 });
 
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
 app.use("/todos", todoRouter);

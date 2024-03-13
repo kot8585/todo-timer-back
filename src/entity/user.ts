@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Category } from "./category";
+import { Todo } from "./todo";
 
 @Entity()
 export class User {
@@ -14,6 +15,10 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
+
+  // 얘도 하는게 맞을까나...
+  @OneToMany(() => Todo, (todo) => todo.user)
+  todos: Todo[];
 
   @CreateDateColumn()
   createdAt: Date;

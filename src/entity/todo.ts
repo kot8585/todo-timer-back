@@ -2,22 +2,26 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Category } from "./category";
+import { User } from "./user";
 
 @Entity()
+@Index("idx_todo_1", ["category"])
 export class Todo {
   @PrimaryGeneratedColumn()
   idx: number;
 
-  @Column({ type: "varchar", comment: "회원 uid" })
-  user_uid: string;
+  @Column()
+  userUid: string;
 
-  @ManyToOne(() => Category, (category) => category.todos)
-  category: Category;
+  @Column()
+  categoryIdx: number;
 
   @Column({ type: "varchar" })
   title: string;
@@ -25,12 +29,27 @@ export class Todo {
   @Column()
   startDate: Date;
 
-  @Column({ type: "boolean" })
+  @Column({ type: "boolean", default: false })
   isCompleted: boolean;
+
+  @Column({ default: 0 })
+  executionTime: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date | null;
+
+  @ManyToOne(() => Category, (category) => category.todos, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "categoryIdx", referencedColumnName: "idx" })
+  category: Category;
+
+  @ManyToOne(() => User, (user) => user.todos, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "userUid", referencedColumnName: "uid" })
+  user: User;
 }

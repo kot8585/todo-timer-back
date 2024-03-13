@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,14 +16,23 @@ export class Category {
   @PrimaryGeneratedColumn()
   idx: number;
 
-  @ManyToOne(() => User, (user) => user.categories)
+  @ManyToOne(() => User, (user) => user.categories, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "userUid", referencedColumnName: "uid" })
   user: User;
+
+  @Column()
+  userUid: string;
 
   @Column({ type: "varchar" })
   title: string;
 
   @OneToMany(() => Todo, (todo) => todo.category)
-  todos: Todo[];
+  todos: Todo[] | null;
+
+  @Column()
+  color: string;
 
   @CreateDateColumn()
   createdAt: Date;

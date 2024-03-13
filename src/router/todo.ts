@@ -1,15 +1,12 @@
 import express from "express";
+import { todoRepository } from "../repository";
 
 const router = express.Router();
 
-router.get("/", (req: any, res: any, next: any) => {
-  res.json({ message: "Get request to the test homepage" });
+router.post("/", async (req, res, next) => {
+  console.log("todo 생성 : ", req.body);
+  const result = await todoRepository.save(req.body);
+  res.status(200).json(result);
 });
-// router.post("/", (req, res, next) => {
-//   res.json({ message: "POST request to the test homepage" });
-// });
-// router.delete("/", (req, res, next) => {
-//   res.json({ message: "DELETE request to the test homepage" });
-// });
 
 module.exports = router;
