@@ -1,18 +1,23 @@
 import {
-  Column,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from "typeorm";
+import { Category } from "./category";
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  idx: number;
+  @PrimaryColumn()
+  uid: string;
 
-  @Column({ type: "varchar", length: 30, comment: "회원 아이디" })
-  id: string;
+  @OneToMany(() => Category, (category) => category.user)
+  categories: Category[];
 
-  @CreateDateColumn({ comment: "회원 생성 날짜" })
-  created_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date | null;
 }

@@ -1,5 +1,8 @@
 import { DataSource } from "typeorm";
 import { User } from "./entity/user";
+import { Category } from "./entity/category";
+import { Todo } from "./entity/todo";
+import { Timeline } from "./entity/timeline";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -10,7 +13,7 @@ export const AppDataSource = new DataSource({
   database: "todolist", // DB내 사용하는 DATABASE
   synchronize: true, // 엔티티 동기화 여부, 개발 중일땐 true를 해도 상관없으나 실서버에서는 false로 하고 migration을 하거나, 직접 수정한다.
   logging: true,
-  entities: [User],
+  entities: [User, Category, Todo, Timeline],
   subscribers: [],
   migrations: [],
 });
