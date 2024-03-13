@@ -4,12 +4,13 @@ import { categoryRepository } from "../repository";
 const router = express.Router();
 
 router.get("/", async (req: any, res, next) => {
+  console.log("req.params.getTodos: ", req.query);
   const allCategoriesAndTodos = await categoryRepository.find({
     relations: {
-      todos: req.params.getTodos, //todo가져오고싶은지 안가져오고싶은지
+      todos: req.query.getTodos === "true", //todo가져오고싶은지 안가져오고싶은지
     },
     where: {
-      userUid: req.params.userUid,
+      userUid: req.query.userUid,
     },
   });
   res.status(200).json(allCategoriesAndTodos);
