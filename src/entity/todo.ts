@@ -5,11 +5,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Category } from "./category";
 import { User } from "./user";
+import { Timeline } from "./timeline";
 
 @Entity()
 @Index("idx_todo_1", ["category"])
@@ -52,4 +54,7 @@ export class Todo {
   })
   @JoinColumn({ name: "userUid", referencedColumnName: "uid" })
   user: User;
+
+  @OneToMany(() => Timeline, (timeline) => timeline.todo)
+  timelines: Timeline[];
 }

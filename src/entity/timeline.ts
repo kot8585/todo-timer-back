@@ -1,6 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Todo } from "./todo";
 
-// pk는 어떤 걸로 해야되지?
 @Entity()
 export class Timeline {
   @PrimaryGeneratedColumn()
@@ -9,11 +15,18 @@ export class Timeline {
   @Column()
   todoIdx: number;
 
-  // timestamp?? datetime??
-  @Column()
-  startTime: Date;
+  @Column("datetime")
+  startDateTime: Date;
 
-  // timestamp?? datetime??
   @Column()
-  EndTime: Date;
+  elapsedTime: number;
+
+  @Column("datetime")
+  endDateTime: Date;
+
+  @ManyToOne(() => Todo, (todo) => todo.timelines, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: "todoIdx", referencedColumnName: "idx" })
+  todo: Todo;
 }

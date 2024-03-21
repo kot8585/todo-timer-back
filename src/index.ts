@@ -17,6 +17,7 @@ app.get("/", (req: Request, res: Response) =>
 const userRouter = require("./router/user");
 const categoryRouter = require("./router/category");
 const todoRouter = require("./router/todo");
+const timelineRouter = require("./router/timeline");
 
 AppDataSource.initialize().then(() => console.log("☘️ DB Connection"));
 
@@ -27,3 +28,4 @@ const server = app.listen(port, () => {
 app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
 app.use("/todos", todoRouter);
+app.use("/timelines", timelineRouter);
