@@ -1,8 +1,11 @@
 import express from "express";
 import { timelineRepository } from "../repository";
-import { Between } from "typeorm";
+import { Between, getConnection, getManager } from "typeorm";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { Todo } from "../entity/todo";
+import { Timeline } from "../entity/timeline";
+import { AppDataSource } from "../data-source";
 
 const router = express.Router();
 
@@ -41,8 +44,45 @@ router.get("/", async (req: any, res, next) => {
 
 router.post("/", async (req, res, next) => {
   console.log("타임라인 생성 : ", req.body);
-  const result = await timelineRepository.save(req.body);
-  console.log("타임라인 잘 들어갓나 ", result);
+  const { todoIdx, startDateTime, endDateTime, elapsedTime, action } = req.body;
+
+  const entityManager = AppDataSource.createEntityManager();
+
+  try {
+    await entityManager.transaction(async (transactionalEntityManager) => {
+      const timeline = transactionalEntityManager.create(Timeline, {
+        todoIdx,
+        startDateTime,
+        endDateTime,
+        elapsedTime,
+      });
+
+      const result = await transactionalEntityManager.save(timeline);
+
+      if (action === "complete") {
+        const todo = await transactionalEntityManager.findOne(Todo, {
+          where: {
+            idx: todoIdx,
+          },
+        });
+        if (!todo) {
+          console.log("Todo가 존재하지 않습니다.");
+          return;
+        }
+        todo.isCompleted = true;
+        await transactionalEntityManager.update(
+          Todo,
+          { idx: todoIdx },
+          { isCompleted: true }
+        );
+      }
+
+      console.log("타임라인 잘 들어갓나 ", result);
+    });
+  } catch (error) {
+    console.error("트랜잭션 오류:", error);
+  }
+
   res.status(200).json();
 });
 
