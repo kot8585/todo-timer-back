@@ -28,7 +28,7 @@ router.get("/", async (req: any, res, next) => {
       "timeline.elapsedTime AS elapsedTime",
       "todo.idx AS todoIdx",
       "todo.title AS todoTitle",
-      "category.color AS categoryColor",
+      "todo.color AS todoColor",
     ])
     .leftJoin("timeline.todo", "todo")
     .leftJoin("todo.category", "category")
@@ -84,6 +84,18 @@ router.post("/", async (req, res, next) => {
   }
 
   res.status(200).json();
+});
+
+router.put("/:timelineIdx", async (req, res, next) => {
+  console.log("todo 수정 : ", req.body);
+  const result = await timelineRepository.save(req.body);
+  res.status(200).json(result);
+});
+
+router.delete("/:timelineIdx", async (req, res, next) => {
+  console.log("todo 삭제 : ", req.body);
+  const result = await timelineRepository.delete(req.params.timelineIdx);
+  res.status(200).json(result);
 });
 
 module.exports = router;

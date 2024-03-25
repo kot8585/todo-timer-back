@@ -29,6 +29,9 @@ export class Todo {
   title: string;
 
   @Column()
+  color: string;
+
+  @Column()
   startDate: Date;
 
   @Column({ type: "boolean", default: false })
