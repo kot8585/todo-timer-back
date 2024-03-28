@@ -14,8 +14,13 @@ dayjs.extend(utc);
 
 router.get("/", async (req: any, res, next) => {
   const { date, userUid } = req.query;
+  console.log("timeline get date", date);
   const targetDate = dayjs(date).utc();
-  console.log(" date: ", targetDate.format(), targetDate.toDate());
+  console.log(
+    "/timeline 조회 date: ",
+    targetDate.format(),
+    targetDate.toDate()
+  );
   const nextDay = targetDate.add(1, "day");
   const timelines = await timelineRepository
     .createQueryBuilder("timeline")
@@ -25,7 +30,7 @@ router.get("/", async (req: any, res, next) => {
       "MINUTE(timeline.startDateTime) AS startMinute",
       "HOUR(timeline.endDateTime) AS endHour",
       "MINUTE(timeline.endDateTime) AS endMinute",
-      "timeline.elapsedTime AS elapsedTime",
+      "timeline.executionTime AS executionTime",
       "todo.idx AS todoIdx",
       "todo.title AS todoTitle",
       "todo.color AS todoColor",
@@ -44,7 +49,8 @@ router.get("/", async (req: any, res, next) => {
 
 router.post("/", async (req, res, next) => {
   console.log("타임라인 생성 : ", req.body);
-  const { todoIdx, startDateTime, endDateTime, elapsedTime, action } = req.body;
+  const { todoIdx, startDateTime, endDateTime, executionTime, action } =
+    req.body;
 
   const entityManager = AppDataSource.createEntityManager();
 
@@ -54,7 +60,7 @@ router.post("/", async (req, res, next) => {
         todoIdx,
         startDateTime,
         endDateTime,
-        elapsedTime,
+        executionTime,
       });
 
       const result = await transactionalEntityManager.save(timeline);

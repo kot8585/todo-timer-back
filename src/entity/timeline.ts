@@ -19,7 +19,7 @@ export class Timeline {
   startDateTime: Date;
 
   @Column()
-  elapsedTime: number;
+  executionTime: number;
 
   @Column("datetime")
   endDateTime: Date;

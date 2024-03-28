@@ -37,9 +37,6 @@ export class Todo {
   @Column({ type: "boolean", default: false })
   isCompleted: boolean;
 
-  @Column({ default: 0 })
-  executionTime: number;
-
   @CreateDateColumn()
   createdAt: Date;
 
