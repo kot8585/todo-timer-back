@@ -24,7 +24,16 @@ router.get("/", async (req: any, res, next) => {
     .where("category.userUid = :userUid", { userUid: req.query.userUid })
     .getMany();
 
-  res.status(200).json(categoriesWithTodos);
+  const result = categoriesWithTodos.map((category) => ({
+    ...category,
+    executionTime: category?.todos?.reduce(
+      (total, todo) => total + todo.executionTime,
+      0
+    ),
+  }));
+  console.log("제발...", result);
+
+  res.status(200).json(result);
 });
 
 router.post("/", async (req, res, next) => {

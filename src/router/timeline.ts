@@ -65,21 +65,29 @@ router.post("/", async (req, res, next) => {
 
       const result = await transactionalEntityManager.save(timeline);
 
+      const todo = await transactionalEntityManager.findOne(Todo, {
+        where: {
+          idx: todoIdx,
+        },
+      });
+      if (!todo) {
+        console.log("Todo가 존재하지 않습니다.");
+        return;
+      }
       if (action === "complete") {
-        const todo = await transactionalEntityManager.findOne(Todo, {
-          where: {
-            idx: todoIdx,
-          },
-        });
-        if (!todo) {
-          console.log("Todo가 존재하지 않습니다.");
-          return;
-        }
-        todo.isCompleted = true;
         await transactionalEntityManager.update(
           Todo,
           { idx: todoIdx },
-          { isCompleted: true }
+          {
+            isCompleted: true,
+            executionTime: todo.executionTime + executionTime,
+          }
+        );
+      } else {
+        await transactionalEntityManager.update(
+          Todo,
+          { idx: todoIdx },
+          { executionTime: todo.executionTime + executionTime }
         );
       }
 
