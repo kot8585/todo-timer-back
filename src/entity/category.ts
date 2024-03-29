@@ -39,4 +39,7 @@ export class Category {
 
   @UpdateDateColumn()
   updatedAt: Date | null;
+
+  @Column({ type: "date", nullable: true }) // 이 부분 수정
+  endDate: Date | null;
 }
