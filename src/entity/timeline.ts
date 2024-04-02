@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Todo } from "./todo";
 
@@ -23,6 +25,12 @@ export class Timeline {
 
   @Column("datetime")
   endDateTime: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date | null;
 
   @ManyToOne(() => Todo, (todo) => todo.timelines, {
     createForeignKeyConstraints: false,
