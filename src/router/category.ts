@@ -1,14 +1,12 @@
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import express from "express";
-import { categoryRepository } from "../repository";
-import { AppDataSource } from "../data-source";
 import { getRepository } from "typeorm";
+import { AppDataSource } from "../data-source";
 import { Category } from "../entity/category";
 import { Todo } from "../entity/todo";
+import { categoryRepository } from "../repository";
 
 const router = express.Router();
-dayjs.extend(utc);
 router.get("/", async (req: any, res, next) => {
   console.log("req.params.getTodos: ", req.query);
 

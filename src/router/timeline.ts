@@ -9,13 +9,10 @@ import { AppDataSource } from "../data-source";
 
 const router = express.Router();
 
-// Day.js 플러그인 활성화 utc로 설정안하면 database랑 시간대가 안맞는듯
-dayjs.extend(utc);
-
 router.get("/", async (req: any, res, next) => {
   const { date, userUid } = req.query;
   console.log("timeline get date", date);
-  const targetDate = dayjs(date).utc();
+  const targetDate = dayjs(date);
   console.log(
     "/timeline 조회 date: ",
     targetDate.format(),
