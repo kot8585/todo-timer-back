@@ -6,13 +6,17 @@ import utc from "dayjs/plugin/utc";
 import { Todo } from "../entity/todo";
 import { Timeline } from "../entity/timeline";
 import { AppDataSource } from "../data-source";
+import { start } from "repl";
+import { User } from "../entity/user";
+
+dayjs.extend(utc);
 
 const router = express.Router();
 
 router.get("/", async (req: any, res, next) => {
   const { date, userUid } = req.query;
   console.log("timeline get date", date);
-  const targetDate = dayjs(date);
+  const targetDate = dayjs.utc(date);
   console.log(
     "/timeline 조회 date: ",
     targetDate.format(),
@@ -23,14 +27,12 @@ router.get("/", async (req: any, res, next) => {
     .createQueryBuilder("timeline")
     .select([
       "timeline.idx AS idx",
-      "HOUR(timeline.startDateTime) AS startHour",
-      "MINUTE(timeline.startDateTime) AS startMinute",
-      "HOUR(timeline.endDateTime) AS endHour",
-      "MINUTE(timeline.endDateTime) AS endMinute",
       "timeline.executionTime AS executionTime",
       "todo.idx AS todoIdx",
       "todo.title AS todoTitle",
       "todo.color AS todoColor",
+      "timeline.startDateTime AS startDateTime",
+      "timeline.endDateTime AS endDateTime",
     ])
     .leftJoin("timeline.todo", "todo")
     .leftJoin("todo.category", "category")
@@ -48,6 +50,7 @@ router.post("/", async (req, res, next) => {
   console.log("타임라인 생성 : ", req.body);
   const { todoIdx, startDateTime, endDateTime, executionTime, action } =
     req.body;
+  console.log("startDateTime 타입", typeof startDateTime);
 
   const entityManager = AppDataSource.createEntityManager();
 
