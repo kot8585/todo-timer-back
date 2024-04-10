@@ -5,13 +5,16 @@ import { AppDataSource } from "../data-source";
 import { Category } from "../entity/category";
 import { Todo } from "../entity/todo";
 import { categoryRepository } from "../repository";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const router = express.Router();
 router.get("/", async (req: any, res, next) => {
   console.log("req.params.getTodos: ", req.query);
 
-  const startDateUtc = dayjs(req.query.selectedDate);
-  const endDateUtc = startDateUtc.add(1, "day");
+  const startDateUtc = dayjs.utc(req.query.selectedDate);
+  const endDateUtc = startDateUtc.add(1, "day").subtract(1, "millisecond");
   const categoriesWithTodos = await categoryRepository
     .createQueryBuilder("category")
     .leftJoinAndSelect(
@@ -19,8 +22,8 @@ router.get("/", async (req: any, res, next) => {
       "todos",
       "todos.startDate BETWEEN :startDate AND :endDate",
       {
-        startDate: startDateUtc.format("YYYY-MM-DD"),
-        endDate: endDateUtc.format("YYYY-MM-DD"),
+        startDate: startDateUtc.format(),
+        endDate: endDateUtc.format(),
       }
     )
     .where("category.userUid = :userUid", { userUid: req.query.userUid })

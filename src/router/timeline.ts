@@ -17,11 +17,11 @@ router.get("/", async (req: any, res, next) => {
   const { date, userUid } = req.query;
   console.log("timeline get date", date);
   const targetDate = dayjs.utc(date);
-  console.log(
-    "/timeline 조회 date: ",
-    targetDate.format(),
-    targetDate.toDate()
-  );
+  // console.log(
+  //   "/timeline 조회 date: ",
+  //   targetDate.format(),
+  //   targetDate.toDate()
+  // );
   const nextDay = targetDate.add(1, "day");
   const timelines = await timelineRepository
     .createQueryBuilder("timeline")
@@ -30,7 +30,7 @@ router.get("/", async (req: any, res, next) => {
       "timeline.executionTime AS executionTime",
       "todo.idx AS todoIdx",
       "todo.title AS todoTitle",
-      "todo.color AS todoColor",
+      "category.color AS todoColor",
       "timeline.startDateTime AS startDateTime",
       "timeline.endDateTime AS endDateTime",
     ])
@@ -42,7 +42,7 @@ router.get("/", async (req: any, res, next) => {
     .andWhere("todo.userUid = :userUid", { userUid })
     .getRawMany();
 
-  console.log("Timeline 조회: ", timelines);
+  // console.log("Timeline 조회: ", timelines);
   res.status(200).json(timelines);
 });
 
