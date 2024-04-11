@@ -15,6 +15,9 @@ export class Timeline {
   idx: number;
 
   @Column()
+  userUid: string;
+
+  @Column()
   todoIdx: number;
 
   @Column("datetime")

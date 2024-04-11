@@ -52,12 +52,6 @@ export class Todo {
   @JoinColumn({ name: "categoryIdx", referencedColumnName: "idx" })
   category: Category;
 
-  @ManyToOne(() => User, (user) => user.todos, {
-    createForeignKeyConstraints: false,
-  })
-  @JoinColumn({ name: "userUid", referencedColumnName: "uid" })
-  user: User;
-
   @OneToMany(() => Timeline, (timeline) => timeline.todo)
   timelines: Timeline[];
 }

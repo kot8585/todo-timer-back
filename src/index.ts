@@ -14,7 +14,7 @@ app.get("/", (req: Request, res: Response) =>
 );
 
 //router 선언
-const userRouter = require("./router/user");
+const initializeRouter = require("./router/initialize");
 const categoryRouter = require("./router/category");
 const todoRouter = require("./router/todo");
 const timelineRouter = require("./router/timeline");
@@ -25,7 +25,7 @@ const server = app.listen(port, () => {
   console.log(`server on ${port}`);
 });
 
-app.use("/users", userRouter);
+app.use("/", initializeRouter);
 app.use("/categories", categoryRouter);
 app.use("/todos", todoRouter);
 app.use("/timelines", timelineRouter);
