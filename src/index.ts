@@ -9,10 +9,6 @@ const port = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req: Request, res: Response) =>
-  res.status(200).send("Hello, RyuWoong?")
-);
-
 //router 선언
 const initializeRouter = require("./router/initialize");
 const categoryRouter = require("./router/category");

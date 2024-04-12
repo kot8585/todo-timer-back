@@ -1,13 +1,11 @@
-import express from "express";
-import { timelineRepository } from "../repository";
-import { Between, getConnection, getManager } from "typeorm";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { Todo } from "../entity/todo";
-import { Timeline } from "../entity/timeline";
+import express from "express";
+import { Between } from "typeorm";
 import { AppDataSource } from "../data-source";
-import { start } from "repl";
-import { User } from "../entity/user";
+import { Timeline } from "../entity/timeline";
+import { Todo } from "../entity/todo";
+import { timelineRepository } from "../repository";
 
 dayjs.extend(utc);
 
