@@ -46,8 +46,14 @@ router.get("/", async (req: any, res, next) => {
 
 router.post("/", async (req, res, next) => {
   console.log("타임라인 생성 : ", req.body);
-  const { todoIdx, startDateTime, endDateTime, executionTime, action } =
-    req.body;
+  const {
+    userUid,
+    todoIdx,
+    startDateTime,
+    endDateTime,
+    executionTime,
+    action,
+  } = req.body;
   console.log("startDateTime 타입", typeof startDateTime);
 
   const entityManager = AppDataSource.createEntityManager();
@@ -55,6 +61,7 @@ router.post("/", async (req, res, next) => {
   try {
     await entityManager.transaction(async (transactionalEntityManager) => {
       const timeline = transactionalEntityManager.create(Timeline, {
+        userUid,
         todoIdx,
         startDateTime,
         endDateTime,
