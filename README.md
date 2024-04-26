@@ -7,5 +7,5 @@
 2. ```npm run start``` 실행
 
 # API 문서
-
+[postman 문서](https://documenter.getpostman.com/view/15907858/2sA3Bt39rw)
 
