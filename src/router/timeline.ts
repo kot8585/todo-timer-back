@@ -85,14 +85,7 @@ router.post("/", async (req, res, next) => {
           { idx: todoIdx },
           {
             isCompleted: true,
-            executionTime: todo.executionTime + executionTime,
           }
-        );
-      } else {
-        await transactionalEntityManager.update(
-          Todo,
-          { idx: todoIdx },
-          { executionTime: todo.executionTime + executionTime }
         );
       }
 

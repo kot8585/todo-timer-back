@@ -4,8 +4,9 @@ import { getRepository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Category } from "../entity/category";
 import { Todo } from "../entity/todo";
-import { categoryRepository } from "../repository";
+import { categoryRepository, todoRepository } from "../repository";
 import utc from "dayjs/plugin/utc";
+import { Timeline } from "../entity/timeline";
 
 dayjs.extend(utc);
 
@@ -15,30 +16,76 @@ router.get("/", async (req: any, res, next) => {
 
   const startDateUtc = dayjs.utc(req.query.selectedDate);
   const endDateUtc = startDateUtc.add(1, "day").subtract(1, "millisecond");
-  const categoriesWithTodos = await categoryRepository
+
+  const result = await categoryRepository
     .createQueryBuilder("category")
-    .leftJoinAndSelect(
-      "category.todos",
-      "todos",
-      "todos.startDate BETWEEN :startDate AND :endDate",
+    .select([
+      "category.idx AS categoryIdx",
+      "category.title AS categoryTitle",
+      "category.color AS categoryColor",
+      "todo.idx AS todoIdx",
+      "todo.title AS todoTitle",
+      "todo.isCompleted",
+      "COALESCE(todo.color, category.color) AS todoColor",
+      "COALESCE(SUM(timeline.executionTime), 0) AS todoExecutionTime",
+    ])
+    .leftJoin(
+      Todo,
+      "todo",
+      "todo.categoryIdx = category.idx AND todo.startDate BETWEEN :startDate AND :endDate",
       {
         startDate: startDateUtc.format(),
         endDate: endDateUtc.format(),
       }
     )
-    .where("category.userUid = :userUid", { userUid: req.query.userUid })
-    .getMany();
+    .leftJoin(
+      Timeline,
+      "timeline",
+      "todo.idx = timeline.todoIdx AND timeline.startDateTime BETWEEN :startDate AND :endDate",
+      {
+        startDate: startDateUtc.format(),
+        endDate: endDateUtc.format(),
+      }
+    )
+    .where("category.userUid = :userUid", {
+      userUid: req.query.userUid,
+    })
+    .groupBy("todo.idx, category.idx")
+    .getRawMany();
 
-  const setCategoryExecutionTime = categoriesWithTodos.map((category) => ({
-    ...category,
-    executionTime: category?.todos?.reduce(
-      (total, todo) => total + todo.executionTime,
-      0
-    ),
-  }));
-  console.log("제발...", setCategoryExecutionTime);
+  const formattedResult = result.reduce((acc, curr) => {
+    // 카테고리가 이미 있는지 확인하고 없으면 새로운 객체를 만듭니다.
+    if (!acc[curr.categoryIdx]) {
+      acc[curr.categoryIdx] = {
+        idx: curr.categoryIdx,
+        title: curr.categoryTitle,
+        color: curr.categoryColor,
+        data: [],
+        executionTime: 0, // 카테고리 실행 시간 초기화
+      };
+    }
 
-  res.status(200).json(setCategoryExecutionTime);
+    // 할 일 항목을 생성하고 결과에 추가합니다.
+    if (curr.todoIdx) {
+      acc[curr.categoryIdx].data.push({
+        idx: curr.todoIdx,
+        title: curr.todoTitle,
+        isCompleted: curr.isCompleted,
+        color: curr.todoColor,
+        executionTime: Number(curr.todoExecutionTime),
+      });
+      // 할 일 항목의 실행 시간을 카테고리의 실행 시간에 추가합니다.
+      acc[curr.categoryIdx].executionTime += Number(curr.todoExecutionTime);
+    }
+
+    return acc;
+  }, {});
+
+  // 객체를 배열로 변환합니다.
+  const finalResult = Object.values(formattedResult);
+
+  console.log(finalResult);
+  res.status(200).json(finalResult);
 });
 
 router.post("/", async (req, res, next) => {
@@ -55,9 +102,6 @@ router.put("/:categoryIdx", async (req, res, next) => {
 
 router.delete("/:categoryIdx", async (req, res, next) => {
   console.log("카테고리 삭제: ", req.body);
-
-  const categoryRepository = getRepository(Category);
-  const todoRepository = getRepository(Todo);
 
   // 트랜잭션 시작
   const entityManager = AppDataSource.createEntityManager();
