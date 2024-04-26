@@ -25,7 +25,7 @@ router.get("/", async (req: any, res, next) => {
       "category.color AS categoryColor",
       "todo.idx AS todoIdx",
       "todo.title AS todoTitle",
-      "todo.isCompleted",
+      "todo.isCompleted AS isCompleted",
       "COALESCE(todo.color, category.color) AS todoColor",
       "COALESCE(SUM(timeline.executionTime), 0) AS todoExecutionTime",
     ])
